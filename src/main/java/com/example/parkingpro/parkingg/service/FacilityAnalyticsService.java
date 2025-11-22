@@ -1,50 +1,45 @@
 package com.example.parkingpro.parkingg.service;
 
-
-import org.springframework.stereotype.Service;
-
 import com.example.parkingpro.parkingg.entity.FacilityAnalytics;
+import com.example.parkingpro.parkingg.entity.Facility;
 import com.example.parkingpro.parkingg.repository.FacilityAnalyticsRepository;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class FacilityAnalyticsService {
-
-    private final FacilityAnalyticsRepository repo;
-
-    public FacilityAnalyticsService(FacilityAnalyticsRepository repo) {
-        this.repo = repo;
-    }
-
-    public FacilityAnalytics createAnalytics(FacilityAnalytics analytics) {
-        return repo.save(analytics);
-    }
-
+    
+    @Autowired
+    private FacilityAnalyticsRepository facilityAnalyticsRepository;
+    
     public List<FacilityAnalytics> getAllAnalytics() {
-        return repo.findAll();
+        return facilityAnalyticsRepository.findAll();
     }
-
+    
     public Optional<FacilityAnalytics> getAnalyticsById(Long id) {
-        return repo.findById(id);
+        return facilityAnalyticsRepository.findById(id);
     }
-
-    public FacilityAnalytics updateAnalytics(Long id, FacilityAnalytics updated) {
-        return repo.findById(id).map(analytics -> {
-            analytics.setFacility(updated.getFacility());
-            analytics.setDate(updated.getDate());
-            analytics.setTotalBookings(updated.getTotalBookings());
-            analytics.setOccupancyRate(updated.getOccupancyRate());
-            analytics.setRevenue(updated.getRevenue());
-            analytics.setAverageBookingDuration(updated.getAverageBookingDuration());
-            analytics.setPeakHours(updated.getPeakHours());
-            analytics.setUtilizationScore(updated.getUtilizationScore());
-            return repo.save(analytics);
-        }).orElseThrow(() -> new RuntimeException("FacilityAnalytics not found"));
+    
+    public List<FacilityAnalytics> getAnalyticsByFacility(Facility facility) {
+        return facilityAnalyticsRepository.findByFacilityOrderByDateDesc(facility);
     }
-
+    
+    public Optional<FacilityAnalytics> getAnalyticsByFacilityAndDate(Facility facility, LocalDate date) {
+        return facilityAnalyticsRepository.findByFacilityAndDate(facility, date);
+    }
+    
+    public List<FacilityAnalytics> getAnalyticsByDateRange(LocalDate startDate, LocalDate endDate) {
+        return facilityAnalyticsRepository.findByDateBetween(startDate, endDate);
+    }
+    
+    public FacilityAnalytics saveAnalytics(FacilityAnalytics analytics) {
+        return facilityAnalyticsRepository.save(analytics);
+    }
+    
     public void deleteAnalytics(Long id) {
-        repo.deleteById(id);
+        facilityAnalyticsRepository.deleteById(id);
     }
 }

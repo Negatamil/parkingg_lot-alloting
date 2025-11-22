@@ -1,43 +1,69 @@
 package com.example.parkingpro.parkingg.entity;
 
-
-
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.math.BigDecimal;
-import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "FacilityAnalytics")
-@Getter
-@Setter
+@Table(name = "facility_analytics")
 public class FacilityAnalytics {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long analyticsId;
-
+    
     @ManyToOne
-    @JoinColumn(name = "facilityId", nullable = false)
+    @JoinColumn(name = "facility_id", nullable = false)
     private Facility facility;
+    
+    @Column(nullable = false)
+    private LocalDate date;
+    
+    @Column(nullable = false)
+    private Integer totalBookings;
+    
+    @Column(nullable = false)
+    private Double totalRevenue;
+    
+    @Column(nullable = false)
+    private Double occupancyRate;
+    
+    @Column(nullable = false)
+    private Integer peakHourBookings;
+    
+    @Column(nullable = false)
+    private Double averageBookingDuration;
 
-    private Date date = new Date(System.currentTimeMillis());
+    public FacilityAnalytics() {}
 
-    private int totalBookings = 0;
+    public FacilityAnalytics(Facility facility, LocalDate date, Integer totalBookings, Double totalRevenue, Double occupancyRate) {
+        this.facility = facility;
+        this.date = date;
+        this.totalBookings = totalBookings;
+        this.totalRevenue = totalRevenue;
+        this.occupancyRate = occupancyRate;
+    }
 
-    @Column(precision = 5, scale = 2)
-    private BigDecimal occupancyRate = BigDecimal.ZERO;
+    // Getters and Setters
+    public Long getAnalyticsId() { return analyticsId; }
+    public void setAnalyticsId(Long analyticsId) { this.analyticsId = analyticsId; }
 
-    @Column(precision = 12, scale = 2)
-    private BigDecimal revenue = BigDecimal.ZERO;
+    public Facility getFacility() { return facility; }
+    public void setFacility(Facility facility) { this.facility = facility; }
 
-    @Column(precision = 5, scale = 2)
-    private BigDecimal averageBookingDuration = BigDecimal.ZERO;
+    public LocalDate getDate() { return date; }
+    public void setDate(LocalDate date) { this.date = date; }
 
-    private String peakHours;
+    public Integer getTotalBookings() { return totalBookings; }
+    public void setTotalBookings(Integer totalBookings) { this.totalBookings = totalBookings; }
 
-    @Column(precision = 5, scale = 2)
-    private BigDecimal utilizationScore = BigDecimal.ZERO;
+    public Double getTotalRevenue() { return totalRevenue; }
+    public void setTotalRevenue(Double totalRevenue) { this.totalRevenue = totalRevenue; }
+
+    public Double getOccupancyRate() { return occupancyRate; }
+    public void setOccupancyRate(Double occupancyRate) { this.occupancyRate = occupancyRate; }
+
+    public Integer getPeakHourBookings() { return peakHourBookings; }
+    public void setPeakHourBookings(Integer peakHourBookings) { this.peakHourBookings = peakHourBookings; }
+
+    public Double getAverageBookingDuration() { return averageBookingDuration; }
+    public void setAverageBookingDuration(Double averageBookingDuration) { this.averageBookingDuration = averageBookingDuration; }
 }

@@ -1,52 +1,44 @@
 package com.example.parkingpro.parkingg.service;
 
-
-
-
-import org.springframework.stereotype.Service;
-
 import com.example.parkingpro.parkingg.entity.Vehicle;
+import com.example.parkingpro.parkingg.entity.User;
 import com.example.parkingpro.parkingg.repository.VehicleRepository;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class VehicleService {
-
-    private final VehicleRepository repo;
-
-    public VehicleService(VehicleRepository repo) {
-        this.repo = repo;
-    }
-
-    public Vehicle createVehicle(Vehicle vehicle) {
-        return repo.save(vehicle);
-    }
-
+    
+    @Autowired
+    private VehicleRepository vehicleRepository;
+    
     public List<Vehicle> getAllVehicles() {
-        return repo.findAll();
+        return vehicleRepository.findAll();
     }
-
+    
     public Optional<Vehicle> getVehicleById(Long id) {
-        return repo.findById(id);
+        return vehicleRepository.findById(id);
     }
-
-    public Vehicle updateVehicle(Long id, Vehicle updated) {
-        return repo.findById(id).map(vehicle -> {
-            vehicle.setUser(updated.getUser());
-            vehicle.setLicensePlate(updated.getLicensePlate());
-            vehicle.setVehicleType(updated.getVehicleType());
-            vehicle.setMake(updated.getMake());
-            vehicle.setModel(updated.getModel());
-            vehicle.setColor(updated.getColor());
-            vehicle.setYear(updated.getYear());
-            vehicle.setIsDefault(updated.getIsDefault());
-            return repo.save(vehicle);
-        }).orElseThrow(() -> new RuntimeException("Vehicle not found"));
+    
+    public List<Vehicle> getVehiclesByUser(User user) {
+        return vehicleRepository.findByUser(user);
     }
-
+    
+    public Optional<Vehicle> getVehicleByNumber(String vehicleNumber) {
+        return vehicleRepository.findByVehicleNumber(vehicleNumber);
+    }
+    
+    public List<Vehicle> getVehiclesByType(String type) {
+        return vehicleRepository.findByVehicleType(type);
+    }
+    
+    public Vehicle saveVehicle(Vehicle vehicle) {
+        return vehicleRepository.save(vehicle);
+    }
+    
     public void deleteVehicle(Long id) {
-        repo.deleteById(id);
+        vehicleRepository.deleteById(id);
     }
 }

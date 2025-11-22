@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Button from '../../components/UI/Button';
 import Input from '../../components/UI/Input';
 import Modal from '../../components/UI/Modal';
+import SecurePaymentForm from '../../components/Payment/SecurePaymentForm';
 
 const PaymentPage = () => {
   const dispatch = useDispatch();

@@ -7,10 +7,22 @@ export const fetchSlots = createAsyncThunk(
   'slots/fetchSlots',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await slotAPI.getAllSlots();
-      return response.data;
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:8080/api/slots', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch slots');
+      }
+      
+      const data = await response.json();
+      return data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch slots');
+      return rejectWithValue(error.message || 'Failed to fetch slots');
     }
   }
 );

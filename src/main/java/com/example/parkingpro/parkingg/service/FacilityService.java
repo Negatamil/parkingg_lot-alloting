@@ -1,55 +1,39 @@
 package com.example.parkingpro.parkingg.service;
 
-
-
-
-import org.springframework.stereotype.Service;
-
 import com.example.parkingpro.parkingg.entity.Facility;
 import com.example.parkingpro.parkingg.repository.FacilityRepository;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class FacilityService {
-
-    private final FacilityRepository repo;
-
-    public FacilityService(FacilityRepository repo) {
-        this.repo = repo;
-    }
-
-    public Facility createFacility(Facility facility) {
-        return repo.save(facility);
-    }
-
+    
+    @Autowired
+    private FacilityRepository facilityRepository;
+    
     public List<Facility> getAllFacilities() {
-        return repo.findAll();
+        return facilityRepository.findAll();
     }
-
+    
     public Optional<Facility> getFacilityById(Long id) {
-        return repo.findById(id);
+        return facilityRepository.findById(id);
     }
-
-    public Facility updateFacility(Long id, Facility updated) {
-        return repo.findById(id).map(facility -> {
-            facility.setFacilityName(updated.getFacilityName());
-            facility.setAddress(updated.getAddress());
-            facility.setCity(updated.getCity());
-            facility.setState(updated.getState());
-            facility.setZipCode(updated.getZipCode());
-            facility.setTotalSlots(updated.getTotalSlots());
-            facility.setOperatingHours(updated.getOperatingHours());
-            facility.setContactInfo(updated.getContactInfo());
-            facility.setManagerId(updated.getManagerId());
-            facility.setLatitude(updated.getLatitude());
-            facility.setLongitude(updated.getLongitude());
-            return repo.save(facility);
-        }).orElseThrow(() -> new RuntimeException("Facility not found"));
+    
+    public List<Facility> getFacilitiesByName(String name) {
+        return facilityRepository.findByFacilityNameContaining(name);
     }
-
+    
+    public List<Facility> getFacilitiesByAddress(String address) {
+        return facilityRepository.findByAddressContaining(address);
+    }
+    
+    public Facility saveFacility(Facility facility) {
+        return facilityRepository.save(facility);
+    }
+    
     public void deleteFacility(Long id) {
-        repo.deleteById(id);
+        facilityRepository.deleteById(id);
     }
 }

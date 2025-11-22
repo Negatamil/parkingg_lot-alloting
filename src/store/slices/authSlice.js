@@ -6,37 +6,51 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      // For demo purposes, simulate a successful login
-      // In production, this would call the actual API
-      const mockUser = {
-        id: 1,
-        email: email,
-        role: email.includes('admin') ? 'ADMIN' : 
-              email.includes('manager') ? 'MANAGER' : 
-              email.includes('security') ? 'SECURITY' : 'USER'
-      };
+      const response = await fetch('http://localhost:8080/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
       
-      const mockToken = 'demo-token-' + Date.now();
+      const data = await response.json();
       
-      localStorage.setItem('token', mockToken);
-      localStorage.setItem('user', JSON.stringify(mockUser));
+      if (!response.ok) {
+        return rejectWithValue(data.message || 'Invalid credentials');
+      }
       
-      return { token: mockToken, user: mockUser };
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
+      return { token: data.token, user: data.user };
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Login failed');
+      return rejectWithValue('Backend connection failed. Please start the backend server.');
     }
   }
 );
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
-  async ({ email, password, role = 'USER' }, { rejectWithValue }) => {
+  async (userData, { rejectWithValue }) => {
     try {
-      // For demo purposes, simulate a successful registration
-      // In production, this would call the actual API
-      return { message: 'Registration successful' };
+      const response = await fetch('http://localhost:8080/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        return rejectWithValue(data.message || 'Registration failed');
+      }
+      
+      return data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Registration failed');
+      return rejectWithValue('Backend connection failed. Please start the backend server.');
     }
   }
 );
@@ -87,6 +101,7 @@ const initialState = {
   loading: false,
   error: null,
   role: null,
+  registrationSuccess: false,
 };
 
 const authSlice = createSlice({
@@ -101,6 +116,9 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       state.role = null;
+    },
+    clearRegistrationSuccess: (state) => {
+      state.registrationSuccess = false;
     },
   },
   extraReducers: (builder) => {
@@ -128,14 +146,17 @@ const authSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.registrationSuccess = false;
       })
-      .addCase(registerUser.fulfilled, (state) => {
+      .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
+        state.registrationSuccess = true;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.registrationSuccess = false;
       })
       
       // Logout
@@ -157,5 +178,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearError, clearAuth } = authSlice.actions;
+export const { clearError, clearAuth, clearRegistrationSuccess } = authSlice.actions;
 export default authSlice.reducer;

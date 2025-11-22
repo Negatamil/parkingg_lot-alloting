@@ -4,7 +4,7 @@ import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import NotificationPanel from '../Notifications/NotificationPanel';
 
-const Layout = () => {
+const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -17,15 +17,12 @@ const Layout = () => {
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         
         {/* Main Content */}
-        <main className="flex-1 lg:ml-64">
+        <main className="flex-1 lg:ml-64 pt-16">
           <div className="p-4 lg:p-8">
-            <Outlet />
+            {children || <Outlet />}
           </div>
         </main>
       </div>
-      
-      {/* Notification Panel */}
-      <NotificationPanel />
     </div>
   );
 };

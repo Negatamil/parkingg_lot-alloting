@@ -1,60 +1,61 @@
 package com.example.parkingpro.parkingg.entity;
 
-
-
-
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.math.BigDecimal;
-import java.sql.Timestamp;
 
 @Entity
-@Table(name = "ParkingSlots")
-@Getter
-@Setter
+@Table(name = "parking_slots")
 public class ParkingSlot {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long slotId;
-
-    @Column(nullable = false, unique = true, length = 10)
+    
+    @Column(nullable = false)
     private String slotNumber;
-
-    @Enumerated(EnumType.STRING)
+    
     @Column(nullable = false)
-    private SlotType slotType = SlotType.REGULAR;
-
+    private String slotType;
+    
     @Column(nullable = false)
-    private Long facilityId; // FK → Facilities.facilityId (will map later)
-
-    @Column(nullable = false, precision = 8, scale = 2)
-    private BigDecimal hourlyRate;
-
+    private Integer floor;
+    
+    @Column(nullable = false)
+    private Double hourlyRate;
+    
+    @Column(nullable = false)
     private Boolean isAvailable = true;
-
-    @Column(length = 100)
+    
+    @Column(nullable = false)
     private String location;
 
-    @Column(columnDefinition = "INT DEFAULT 1")
-    private Integer floor = 1;
+    public ParkingSlot() {}
 
-    @Column(length = 10)
-    private String section;
-
-    @Column(length = 50)
-    private String coordinates;
-
-    @Column(columnDefinition = "TEXT")
-    private String features; // store JSON as text (can use @Convert for real JSON)
-
-    private Timestamp createdDate = new Timestamp(System.currentTimeMillis());
-
-    private Timestamp lastModified = new Timestamp(System.currentTimeMillis());
-
-    public enum SlotType {
-        REGULAR, VIP, HANDICAPPED, ELECTRIC_VEHICLE
+    public ParkingSlot(String slotNumber, String slotType, Integer floor, Double hourlyRate, String location) {
+        this.slotNumber = slotNumber;
+        this.slotType = slotType;
+        this.floor = floor;
+        this.hourlyRate = hourlyRate;
+        this.location = location;
     }
+
+    // Getters and Setters
+    public Long getSlotId() { return slotId; }
+    public void setSlotId(Long slotId) { this.slotId = slotId; }
+
+    public String getSlotNumber() { return slotNumber; }
+    public void setSlotNumber(String slotNumber) { this.slotNumber = slotNumber; }
+
+    public String getSlotType() { return slotType; }
+    public void setSlotType(String slotType) { this.slotType = slotType; }
+
+    public Integer getFloor() { return floor; }
+    public void setFloor(Integer floor) { this.floor = floor; }
+
+    public Double getHourlyRate() { return hourlyRate; }
+    public void setHourlyRate(Double hourlyRate) { this.hourlyRate = hourlyRate; }
+
+    public Boolean getIsAvailable() { return isAvailable; }
+    public void setIsAvailable(Boolean isAvailable) { this.isAvailable = isAvailable; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 }

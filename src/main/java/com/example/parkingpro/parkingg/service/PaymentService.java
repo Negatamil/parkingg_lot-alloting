@@ -1,50 +1,54 @@
 package com.example.parkingpro.parkingg.service;
 
-
-import org.springframework.stereotype.Service;
-
 import com.example.parkingpro.parkingg.entity.Payment;
+import com.example.parkingpro.parkingg.entity.Booking;
 import com.example.parkingpro.parkingg.repository.PaymentRepository;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class PaymentService {
-
-    private final PaymentRepository repo;
-
-    public PaymentService(PaymentRepository repo) {
-        this.repo = repo;
-    }
-
-    public Payment createPayment(Payment payment) {
-        return repo.save(payment);
-    }
-
+    
+    @Autowired
+    private PaymentRepository paymentRepository;
+    
     public List<Payment> getAllPayments() {
-        return repo.findAll();
+        return paymentRepository.findAll();
     }
-
+    
     public Optional<Payment> getPaymentById(Long id) {
-        return repo.findById(id);
+        return paymentRepository.findById(id);
     }
-
-    public Payment updatePayment(Long id, Payment updated) {
-        return repo.findById(id).map(payment -> {
-            payment.setBooking(updated.getBooking());
-            payment.setAmount(updated.getAmount());
-            payment.setPaymentMethod(updated.getPaymentMethod());
-            payment.setTransactionId(updated.getTransactionId());
-            payment.setStatus(updated.getStatus());
-            payment.setPaymentDate(updated.getPaymentDate());
-            payment.setRefundAmount(updated.getRefundAmount());
-            payment.setGatewayResponse(updated.getGatewayResponse());
-            return repo.save(payment);
+    
+    public Optional<Payment> getPaymentByBooking(Booking booking) {
+        return paymentRepository.findByBooking(booking);
+    }
+    
+    public List<Payment> getPaymentsByStatus(String status) {
+        return paymentRepository.findByPaymentStatus(status);
+    }
+    
+    public Payment savePayment(Payment payment) {
+        return paymentRepository.save(payment);
+    }
+    
+    public Payment createPayment(Payment payment) {
+        return paymentRepository.save(payment);
+    }
+    
+    public Payment updatePayment(Long id, Payment updatedPayment) {
+        return paymentRepository.findById(id).map(payment -> {
+            payment.setAmount(updatedPayment.getAmount());
+            payment.setPaymentMethod(updatedPayment.getPaymentMethod());
+            payment.setPaymentStatus(updatedPayment.getPaymentStatus());
+            payment.setTransactionId(updatedPayment.getTransactionId());
+            return paymentRepository.save(payment);
         }).orElseThrow(() -> new RuntimeException("Payment not found"));
     }
-
+    
     public void deletePayment(Long id) {
-        repo.deleteById(id);
+        paymentRepository.deleteById(id);
     }
 }

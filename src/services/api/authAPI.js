@@ -1,12 +1,12 @@
 import api from './api';
 
 const authAPI = {
-  login: (email, password) => {
-    return api.post('/auth/login', { email, password });
+  login: (credentials) => {
+    return api.post('/auth/login', credentials);
   },
 
-  register: (email, password, role = 'USER') => {
-    return api.post('/auth/register', { email, password, role });
+  register: (userData) => {
+    return api.post('/auth/register', userData);
   },
 
   logout: () => {

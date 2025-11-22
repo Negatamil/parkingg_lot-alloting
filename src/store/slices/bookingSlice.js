@@ -6,10 +6,22 @@ export const fetchBookings = createAsyncThunk(
   'bookings/fetchBookings',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await bookingAPI.getAllBookings();
-      return response.data;
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:8080/api/bookings', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch bookings');
+      }
+      
+      const data = await response.json();
+      return data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch bookings');
+      return rejectWithValue(error.message || 'Failed to fetch bookings');
     }
   }
 );
@@ -18,10 +30,25 @@ export const createBooking = createAsyncThunk(
   'bookings/createBooking',
   async (bookingData, { rejectWithValue }) => {
     try {
-      const response = await bookingAPI.createBooking(bookingData);
-      return response.data;
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:8080/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookingData),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create booking');
+      }
+      
+      const data = await response.json();
+      return data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to create booking');
+      return rejectWithValue(error.message || 'Failed to create booking');
     }
   }
 );
@@ -40,12 +67,12 @@ export const updateBooking = createAsyncThunk(
 
 export const cancelBooking = createAsyncThunk(
   'bookings/cancelBooking',
-  async (id, { rejectWithValue }) => {
+  async (bookingId, { rejectWithValue }) => {
     try {
-      await bookingAPI.deleteBooking(id);
-      return id;
+      console.log('Cancelling booking:', bookingId);
+      return bookingId;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to cancel booking');
+      return rejectWithValue('Failed to cancel booking');
     }
   }
 );
@@ -74,7 +101,7 @@ const initialState = {
         hourlyRate: 5.00
       },
       vehicleNumber: 'ABC-123',
-      startTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
+      startTime: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(), // 3 hours from now
       endTime: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(), // 4 hours from now
       totalCost: 10.00,
       status: 'CONFIRMED',

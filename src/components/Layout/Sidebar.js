@@ -8,39 +8,35 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   const userMenuItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { path: '/booking', label: 'Book Slot', icon: '🚗' },
-    { path: '/booking-history', label: 'My Bookings', icon: '📋' },
-    { path: '/payment', label: 'Payments', icon: '💳' },
     { path: '/profile', label: 'Profile', icon: '👤' },
   ];
 
+  const customerMenuItems = [
+    { path: '/booking', label: 'Book Slot', icon: '🚗' },
+    { path: '/booking-history', label: 'My Bookings', icon: '📋' },
+    { path: '/payment', label: 'Payments', icon: '💳' },
+  ];
+
   const adminMenuItems = [
-    { path: '/admin', label: 'Admin Dashboard', icon: '⚙️' },
     { path: '/admin/users', label: 'User Management', icon: '👥' },
     { path: '/admin/slots', label: 'Slot Management', icon: '🅿️' },
-    { path: '/admin/facilities', label: 'Facilities', icon: '🏢' },
-    { path: '/admin/analytics', label: 'Analytics', icon: '📈' },
   ];
 
   const managerMenuItems = [
-    { path: '/manager', label: 'Manager Dashboard', icon: '📊' },
     { path: '/manager/analytics', label: 'Facility Analytics', icon: '📈' },
   ];
 
-  const securityMenuItems = [
-    { path: '/security', label: 'Security Dashboard', icon: '🛡️' },
-  ];
-
   const getMenuItems = () => {
-    switch (role) {
+    const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const currentRole = role || storedUser.role || 'USER';
+    
+    switch (currentRole) {
       case 'ADMIN':
         return [...userMenuItems, ...adminMenuItems];
       case 'MANAGER':
         return [...userMenuItems, ...managerMenuItems];
-      case 'SECURITY':
-        return [...userMenuItems, ...securityMenuItems];
       default:
-        return userMenuItems;
+        return [...userMenuItems, ...customerMenuItems];
     }
   };
 
@@ -105,7 +101,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 </span>
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900">{role}</p>
+                <p className="text-sm font-medium text-gray-900">{role || JSON.parse(localStorage.getItem('user') || '{}').role || 'USER'}</p>
                 <p className="text-xs text-gray-500">User Role</p>
               </div>
             </div>

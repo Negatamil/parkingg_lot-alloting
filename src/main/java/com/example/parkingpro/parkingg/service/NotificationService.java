@@ -1,50 +1,44 @@
-    package com.example.parkingpro.parkingg.service;
-
-
-import org.springframework.stereotype.Service;
+package com.example.parkingpro.parkingg.service;
 
 import com.example.parkingpro.parkingg.entity.Notification;
+import com.example.parkingpro.parkingg.entity.User;
 import com.example.parkingpro.parkingg.repository.NotificationRepository;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class NotificationService {
-
-    private final NotificationRepository repo;
-
-    public NotificationService(NotificationRepository repo) {
-        this.repo = repo;
-    }
-
-    public Notification createNotification(Notification notification) {
-        return repo.save(notification);
-    }
-
+    
+    @Autowired
+    private NotificationRepository notificationRepository;
+    
     public List<Notification> getAllNotifications() {
-        return repo.findAll();
+        return notificationRepository.findAll();
     }
-
+    
     public Optional<Notification> getNotificationById(Long id) {
-        return repo.findById(id);
+        return notificationRepository.findById(id);
     }
-
-    public Notification updateNotification(Long id, Notification updated) {
-        return repo.findById(id).map(notification -> {
-            notification.setUser(updated.getUser());
-            notification.setMessage(updated.getMessage());
-            notification.setType(updated.getType());
-            notification.setRead(updated.isRead());
-            notification.setCreatedDate(updated.getCreatedDate());
-            notification.setPriority(updated.getPriority());
-            notification.setRelatedEntityType(updated.getRelatedEntityType());
-            notification.setRelatedEntityId(updated.getRelatedEntityId());
-            return repo.save(notification);
-        }).orElseThrow(() -> new RuntimeException("Notification not found"));
+    
+    public List<Notification> getNotificationsByUser(User user) {
+        return notificationRepository.findByUserOrderByCreatedAtDesc(user);
     }
-
+    
+    public List<Notification> getUnreadNotifications(User user) {
+        return notificationRepository.findByUserAndIsRead(user, false);
+    }
+    
+    public Long getUnreadCount(User user) {
+        return notificationRepository.countByUserAndIsRead(user, false);
+    }
+    
+    public Notification saveNotification(Notification notification) {
+        return notificationRepository.save(notification);
+    }
+    
     public void deleteNotification(Long id) {
-        repo.deleteById(id);
+        notificationRepository.deleteById(id);
     }
 }

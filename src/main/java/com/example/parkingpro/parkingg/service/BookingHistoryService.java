@@ -1,50 +1,55 @@
 package com.example.parkingpro.parkingg.service;
 
-
-import org.springframework.stereotype.Service;
-
 import com.example.parkingpro.parkingg.entity.BookingHistory;
+import com.example.parkingpro.parkingg.entity.Booking;
 import com.example.parkingpro.parkingg.repository.BookingHistoryRepository;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class BookingHistoryService {
-
-    private final BookingHistoryRepository repo;
-
-    public BookingHistoryService(BookingHistoryRepository repo) {
-        this.repo = repo;
-    }
-
-    public BookingHistory createHistory(BookingHistory history) {
-        return repo.save(history);
-    }
-
+    
+    @Autowired
+    private BookingHistoryRepository bookingHistoryRepository;
+    
     public List<BookingHistory> getAllHistories() {
-        return repo.findAll();
+        return bookingHistoryRepository.findAll();
     }
-
+    
     public Optional<BookingHistory> getHistoryById(Long id) {
-        return repo.findById(id);
+        return bookingHistoryRepository.findById(id);
     }
-
-    public BookingHistory updateHistory(Long id, BookingHistory updated) {
-        return repo.findById(id).map(history -> {
-            history.setBooking(updated.getBooking());
-            history.setStatusChange(updated.getStatusChange());
-            history.setPreviousStatus(updated.getPreviousStatus());
-            history.setNewStatus(updated.getNewStatus());
-            history.setChangeDate(updated.getChangeDate());
-            history.setChangedBy(updated.getChangedBy());
-            history.setNotes(updated.getNotes());
-            history.setReason(updated.getReason());
-            return repo.save(history);
-        }).orElseThrow(() -> new RuntimeException("BookingHistory not found"));
+    
+    public List<BookingHistory> getHistoryByBooking(Booking booking) {
+        return bookingHistoryRepository.findByBookingOrderByActionDateDesc(booking);
     }
-
+    
+    public List<BookingHistory> getHistoryByAction(String action) {
+        return bookingHistoryRepository.findByActionOrderByActionDateDesc(action);
+    }
+    
+    public BookingHistory saveBookingHistory(BookingHistory bookingHistory) {
+        return bookingHistoryRepository.save(bookingHistory);
+    }
+    
+    public BookingHistory createHistory(BookingHistory history) {
+        return bookingHistoryRepository.save(history);
+    }
+    
+    public BookingHistory updateHistory(Long id, BookingHistory updatedHistory) {
+        return bookingHistoryRepository.findById(id).map(history -> {
+            history.setAction(updatedHistory.getAction());
+            history.setPreviousStatus(updatedHistory.getPreviousStatus());
+            history.setNewStatus(updatedHistory.getNewStatus());
+            history.setNotes(updatedHistory.getNotes());
+            history.setNotes(updatedHistory.getNotes());
+            return bookingHistoryRepository.save(history);
+        }).orElseThrow(() -> new RuntimeException("History not found"));
+    }
+    
     public void deleteHistory(Long id) {
-        repo.deleteById(id);
+        bookingHistoryRepository.deleteById(id);
     }
 }

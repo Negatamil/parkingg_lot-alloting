@@ -6,6 +6,8 @@ import { fetchBookings } from '../../store/slices/bookingSlice';
 import SlotCard from '../../components/Booking/SlotCard';
 import Button from '../../components/UI/Button';
 
+
+
 const Dashboard = () => {
   const dispatch = useDispatch();
   const { user, role } = useSelector((state) => state.auth);
@@ -65,7 +67,7 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Welcome Section */}
+
       <div className="bg-gradient-to-r from-primary-600 to-primary-800 rounded-lg p-6 text-white">
         <h1 className="text-2xl font-bold">
           {getGreeting()}, {user?.email?.split('@')[0]}!
@@ -259,7 +261,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Upcoming Bookings */}
+
       {upcomingBookings.length > 0 && (
         <div className="card p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Bookings</h2>

@@ -10,7 +10,10 @@ const Navbar = ({ onMenuClick }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     dispatch(logoutUser());
+    window.location.href = '/login';
   };
 
   const getRoleColor = (role) => {
